@@ -1,0 +1,17 @@
+=========== CORRIDOR COVERAGE REPORT ===========
+corridor          : 3.30 m wide x 12.00 m long (39.6 m2)
+lanes             : 5 (spacing 0.585 m, coverage width 0.66 m)
+coverage          : 87.7 % of the whole floor
+                    99.4 % of the floor inside the wall clearance band (0.15 m sides / 0.20 m ends)
+overlap           : 13.2 % of the covered floor was covered twice or more (4.6 m2)
+min wall clearance: 0.058 m (closest any wall got to the robot footprint, lidar)
+distance / time   : 57.0 m in 279 s (sim time)
+lidar corrections : 4927 wall fixes, mean |offset correction| 1.1 mm
+  - start corner reached
+  - lane 1: 10.88 m
+  - lane 2: 10.90 m
+  - lane 3: 10.89 m
+  - lane 4: 10.90 m
+  - lane 5: 10.89 m
+  - return Home: reached, 0.18 m from Home
+================================================

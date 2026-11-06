@@ -1,0 +1,240 @@
+Panels:
+  - Class: nav2_rviz_plugins/Navigation 2
+    Name: Navigation 2
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Tool Properties
+    Name: Tool Properties
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Reference Frame: map
+      Cell Size: 0.5
+      Plane Cell Count: 40
+    - Class: rviz_default_plugins/Map
+      Name: Map
+      Enabled: true
+      Topic:
+        Value: /map
+        Durability Policy: Transient Local
+        Reliability Policy: Reliable
+      Color Scheme: map
+      Alpha: 0.8
+      Draw Behind: true
+    - Class: rviz_default_plugins/Map
+      Name: Global costmap
+      Enabled: false
+      Topic:
+        Value: /global_costmap/costmap
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color Scheme: costmap
+      Alpha: 0.4
+      Draw Behind: false
+    - Class: rviz_default_plugins/Map
+      Name: Local costmap
+      Enabled: false
+      Topic:
+        Value: /local_costmap/costmap
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color Scheme: costmap
+      Alpha: 0.6
+      Draw Behind: false
+    - Class: nav2_rviz_plugins/ParticleCloud
+      Name: AMCL particles
+      Enabled: true
+      Topic:
+        Value: /particle_cloud
+        Reliability Policy: Best Effort
+      Color: 0; 180; 0
+      Shape: Arrow (Flat)
+      Arrow Length: 0.15
+    - Class: rviz_default_plugins/Path
+      Name: Global plan
+      Enabled: true
+      Topic:
+        Value: /plan
+      Color: 255; 0; 255
+      Line Style: Billboards
+      Line Width: 0.04
+    - Class: rviz_default_plugins/Path
+      Name: Local plan
+      Enabled: true
+      Topic:
+        Value: /local_plan
+      Color: 0; 200; 255
+      Line Style: Billboards
+      Line Width: 0.04
+    - Class: rviz_default_plugins/Polygon
+      Name: Footprint
+      Enabled: true
+      Topic:
+        Value: /local_costmap/published_footprint
+      Color: 255; 255; 0
+    - Class: rviz_default_plugins/Marker
+      Name: Map outline (true walls)
+      Enabled: true
+      Topic:
+        Value: /map_outline
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Namespaces:
+        map_outline: true
+    - Class: rviz_default_plugins/Map
+      Name: Coverage (blue once, red overlap)
+      Enabled: true
+      Topic:
+        Value: /coverage_grid
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+      Color Scheme: costmap
+      Alpha: 0.6
+      Draw Behind: false
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Coverage lanes / trail / state
+      Enabled: true
+      Topic:
+        Value: /coverage_markers
+        Durability Policy: Volatile
+        Reliability Policy: Reliable
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+      Alpha: 1
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+      Show Names: false
+      Show Axes: true
+      Marker Scale: 0.3
+    - Class: rviz_default_plugins/LaserScan
+      Name: Fused /scan_merged
+      Enabled: true
+      Topic:
+        Value: /scan_merged
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 0; 255; 120
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: Lidar /scan
+      Enabled: false
+      Topic:
+        Value: /scan
+        Reliability Policy: Best Effort
+      Size (m): 0.04
+      Color Transformer: FlatColor
+      Color: 255; 50; 50
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US front left
+      Enabled: false
+      Topic:
+        Value: /ultrasonic/front_left
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 50; 150; 255
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US front right
+      Enabled: false
+      Topic:
+        Value: /ultrasonic/front_right
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 50; 150; 255
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US rear left
+      Enabled: false
+      Topic:
+        Value: /ultrasonic/rear_left
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 200; 0
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US rear right
+      Enabled: false
+      Topic:
+        Value: /ultrasonic/rear_right
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 200; 0
+      Style: Flat Squares
+    - Class: rviz_default_plugins/Odometry
+      Name: Odometry
+      Enabled: false
+      Topic:
+        Value: /odom
+        Reliability Policy: Best Effort
+      Keep: 300
+      Position Tolerance: 0.05
+      Angle Tolerance: 0.1
+      Shape:
+        Value: Arrow
+        Color: 0; 220; 120
+        Alpha: 1
+        Shaft Length: 0.25
+        Shaft Radius: 0.015
+        Head Length: 0.06
+        Head Radius: 0.04
+    - Class: rviz_default_plugins/Image
+      Name: Depth camera
+      Enabled: true
+      Topic:
+        Value: /camera/depth/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+    - Class: rviz_default_plugins/Image
+      Name: Color camera
+      Enabled: true
+      Topic:
+        Value: /camera/color/image_raw
+        Reliability Policy: Best Effort
+  Global Options:
+    Fixed Frame: map
+    Background Color: 48; 48; 48
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
+    - Class: rviz_default_plugins/PublishPoint
+      Topic:
+        Value: /clicked_point
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Target Frame: base_ground
+      Distance: 14.0
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Pitch: 1.2
+      Yaw: 2.4
+Window Geometry:
+  Width: 1600
+  Height: 950

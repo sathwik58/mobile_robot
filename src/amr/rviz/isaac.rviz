@@ -1,0 +1,141 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Tool Properties
+    Name: Tool Properties
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Reference Frame: odom
+      Cell Size: 0.5
+      Plane Cell Count: 40
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Value: /robot_description
+      Alpha: 1
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: false
+      Show Names: false
+      Show Axes: true
+      Marker Scale: 0.3
+    - Class: rviz_default_plugins/LaserScan
+      Name: Lidar /scan
+      Enabled: true
+      Topic:
+        Value: /scan
+        Reliability Policy: Best Effort
+      Size (m): 0.04
+      Color Transformer: FlatColor
+      Color: 255; 50; 50
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US front left
+      Enabled: true
+      Topic:
+        Value: /ultrasonic/front_left
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 50; 150; 255
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US front right
+      Enabled: true
+      Topic:
+        Value: /ultrasonic/front_right
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 50; 150; 255
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US rear left
+      Enabled: true
+      Topic:
+        Value: /ultrasonic/rear_left
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 200; 0
+      Style: Flat Squares
+    - Class: rviz_default_plugins/LaserScan
+      Name: US rear right
+      Enabled: true
+      Topic:
+        Value: /ultrasonic/rear_right
+        Reliability Policy: Best Effort
+      Size (m): 0.05
+      Color Transformer: FlatColor
+      Color: 255; 200; 0
+      Style: Flat Squares
+    - Class: rviz_default_plugins/Odometry
+      Name: Odometry
+      Enabled: true
+      Topic:
+        Value: /odom
+        Reliability Policy: Best Effort
+      Keep: 300
+      Position Tolerance: 0.05
+      Angle Tolerance: 0.1
+      Shape:
+        Value: Arrow
+        Color: 0; 220; 120
+        Alpha: 1
+        Shaft Length: 0.25
+        Shaft Radius: 0.015
+        Head Length: 0.06
+        Head Radius: 0.04
+    - Class: rviz_default_plugins/Image
+      Name: Depth image
+      Enabled: true
+      Topic:
+        Value: /camera/depth/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+    - Class: rviz_default_plugins/Image
+      Name: Color image
+      Enabled: true
+      Topic:
+        Value: /camera/color/image_raw
+        Reliability Policy: Best Effort
+  Global Options:
+    Fixed Frame: odom
+    Background Color: 48; 48; 48
+    Frame Rate: 30
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/Measure
+    - Class: rviz_default_plugins/SetInitialPose
+      Topic:
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Value: /goal_pose
+    - Class: rviz_default_plugins/PublishPoint
+      Topic:
+        Value: /clicked_point
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Target Frame: base_ground
+      Distance: 5.0
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Pitch: 0.75
+      Yaw: 2.4
+Window Geometry:
+  Width: 1600
+  Height: 950

@@ -1,0 +1,26 @@
+# Part C - lane coverage (scripts/lane_coverage.py). Distances in metres, speeds m/s, rad/s.
+lane_coverage:
+  ros__parameters:
+    use_sim_time: true
+    coverage_width: 0.66        # strip covered per lane = robot width (wheel to wheel)
+    min_overlap: 0.06           # lanes overlap at least this much -> no uncovered stripes
+    wall_clearance: 0.15        # gap robot side <-> side wall on the first / last lane
+    end_clearance: 0.20         # gap robot front <-> end wall when a lane ends
+    turn_margin: 0.05           # rotating footprint keeps at least this from every wall
+    footprint_front: 0.36       # robot outline in base_ground (same as Nav2 footprint)
+    footprint_rear: 0.11
+    footprint_half_width: 0.33
+    lane_speed: 0.30
+    min_speed: 0.06
+    shift_speed: 0.15
+    max_turn_rate: 0.6
+    offset_gain: 1.5            # lane keeping: lateral error -> heading correction
+    heading_gain: 2.0           # heading error -> turn rate
+    max_correction_deg: 20.0
+    lidar_fusion_gain: 0.15     # how strongly each lidar wall fix corrects odometry
+    obstacle_wait: 3.0          # s blocked in a lane before the lane is ended early
+    start_delay: 3.0            # s after start before measuring (SLAM / scans settle)
+    grid_resolution: 0.05       # coverage grid cell
+    return_home: true
+    max_length: 30.0            # used only if the far end wall is out of lidar range
+    report_dir: ~/mobile_robot/coverage_reports

@@ -1,0 +1,8 @@
+build/
+install/
+log/
+__pycache__/
+*.pyc
+*.tmp
+src/amr_nav/maps/*_session.data
+src/amr_nav/maps/*_session.posegraph

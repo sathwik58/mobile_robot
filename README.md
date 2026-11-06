@@ -1,0 +1,191 @@
+# Autonomous Mobile Robot in Isaac Sim
+
+This is my differential-drive robot simulated in Isaac Sim 5.1 and driven with ROS 2 Humble.
+I designed the robot in SolidWorks and exported it to URDF. The ROS 2 side does mapping,
+localization, navigation and corridor coverage.
+
+Tested on Ubuntu 22.04, ROS 2 Humble and Isaac Sim 5.1 (installed in `~/isaacsim_5.1`).
+
+## Videos
+
+- [Part A: navigation on the saved warehouse map](videos/part_a_navigation.mp4)
+- [Part B: navigating while mapping the maze](videos/part_b_navigate_while_mapping.mp4)
+
+## The robot
+
+- Wide chassis, two rear drive wheels and a front caster
+- Wheel radius 0.08 m, wheel separation 0.60 m, about 10 kg in total
+- 2D lidar at 0.28 m height, 360°, 0.15 to 12 m
+- 4 ultrasonic sensors (2 front, 2 rear) at 0.12 m height, 30° cone, 0.03 to 4 m
+- Depth camera (RealSense D455 model from Isaac) at the front
+- 9-axis IMU (BNO055 position on the chassis), 100 Hz
+
+The lidar and ultrasonics are simulated with PhysX lidars, so they only see objects that
+have a collider.
+
+TF tree: `map -> odom -> base_ground -> base_link -> (wheels, caster, sensors)`.
+Isaac Sim publishes `odom -> base_ground`, robot_state_publisher publishes the rest from
+the URDF, and SLAM or AMCL publishes `map -> odom`.
+
+## Workspace layout
+
+```
+mobile_robot/
+├── src/amr/                  robot description + Isaac Sim side
+│   ├── urdf/                 amr.urdf, amr.usd (robot, sensors, ROS 2 action graph), worlds
+│   ├── meshes/               STL files from SolidWorks
+│   ├── launch/               isaac.launch.py (Isaac + RViz + teleop), spawn.launch.py (RViz only)
+│   └── scripts/              isaac_run.py, isaac_omap.py, make_maze.py, make_corridor.py, ...
+└── src/amr_nav/              everything for the three tasks
+    ├── launch/               slam, nav (Part A), slam_nav (Part B), coverage (Part C)
+    ├── config/               slam_params, nav2_params, coverage_params
+    ├── scripts/              scan_merger, map_outline, lane_coverage, amr_gui
+    ├── maps/                 saved maps
+    └── rviz/                 RViz views
+```
+
+## Build
+
+```
+cd ~/mobile_robot
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Run `source install/setup.bash` in every new terminal before launching anything.
+
+## Easiest way: the GUI
+
+```
+ros2 run amr_nav amr_gui.py
+```
+
+Pick a task, check the world (and the map for Part A), press Start. Stop shuts down
+everything that was started, including Isaac. There are also buttons for the teleop
+keyboard and for saving the current SLAM map.
+
+Only run one simulation at a time. Close any Isaac window that is already open first.
+
+## Sensor fusion
+
+All tasks use `/scan_merged` instead of the raw lidar. `scan_merger.py` takes the lidar and the four
+ultrasonic scans, moves every point into the `base_ground` frame with TF, and keeps the
+nearest return in each 0.5° slot. Where the sensors overlap, the closest obstacle wins. Readings with no
+echo (max range) are dropped so they don't show up as fake walls. The ultrasonics catch
+low obstacles that sit under the lidar's scan plane.
+
+## Making a map
+
+```
+ros2 launch amr_nav slam.launch.py
+```
+
+This starts Isaac with the robot in the warehouse (`world1.usd`), slam_toolbox, RViz and the
+teleop keyboard. Drive slowly through the whole area, then save the map from a second terminal
+while it is still running:
+
+```
+ros2 run nav2_map_server map_saver_cli -f ~/mobile_robot/src/amr_nav/maps/world1 --ros-args -p use_sim_time:=true -p save_map_timeout:=20.0
+```
+
+## Part A: navigation on a saved map
+
+```
+ros2 launch amr_nav nav.launch.py
+```
+
+The robot localizes with AMCL on the saved map (`maps/world1.yaml`) and Nav2 drives it.
+AMCL starts at (0, 0, 0) because the robot always spawns at the world origin. Give goals in
+RViz with "2D Goal Pose" (for example A, then B, then C, then back Home). Obstacles seen
+by the lidar or the ultrasonics are added to the costmaps, so the planner goes around
+them. To try it, drop a box with a collider in the robot's path in Isaac while it is driving.
+
+Other map or world: `map:=<file>.yaml world:=<file>.usd`.
+
+## Part B: navigate while mapping (maze)
+
+```
+ros2 launch amr_nav slam_nav.launch.py
+```
+
+Here SLAM and Nav2 run at the same time and there is no saved map. Every run starts with an
+empty map, and the robot builds it while it drives. Nav2 plans on that map in the
+same run. Wait until the terminal shows `Managed nodes are active`, then set the goal in
+RViz with "2D Goal Pose". It can be in the grey, unknown part of the map. The robot finds its
+way through the maze, and the map grows on the way.
+
+The orange lines in RViz are the real walls of the world. They are only drawn for checking and
+are not used by SLAM or Nav2. If the black SLAM walls sit on the orange lines, the mapping is
+correct.
+
+The maze world is generated by a script. To get a different one:
+
+```
+python3 ~/mobile_robot/src/amr/scripts/make_maze.py --seed 7
+```
+
+## Part C: corridor lane coverage
+
+```
+ros2 launch amr_nav coverage.launch.py
+```
+
+The robot starts inside a 3.3 m x 12 m corridor and does the whole task by itself:
+
+1. Measures the corridor with the lidar (width, direction, both end walls).
+2. Works out how many lanes it needs. The outer lanes keep 0.15 m from the walls, and lanes
+   overlap by at least 6 cm so no stripes are missed. For this corridor that is 5 lanes.
+3. Drives the lanes back and forth. The lidar keeps each lane straight by measuring the
+   distance to the side wall, and the front ultrasonics and lidar end each lane 0.20 m before
+   the end wall. At each lane end it turns on the spot, and before turning it checks that
+   the robot's corners won't touch a wall.
+4. Goes back Home with Nav2 and writes a report to `~/mobile_robot/coverage_reports/`.
+
+A typical run gives about 99 % coverage of the floor it is allowed to drive on, around 13 %
+overlap, and ends back within 0.2 m of Home. In RViz the covered floor turns blue, overlap is
+red, and the planned lanes are green.
+
+Settings such as coverage width, clearance and speed are in `config/coverage_params.yaml`. A different
+corridor:
+
+```
+python3 ~/mobile_robot/src/amr/scripts/make_corridor.py --width 2.8 --length 10
+```
+
+## Robot only
+
+```
+ros2 launch amr isaac.launch.py
+```
+
+Isaac with the robot on an empty ground plane, plus RViz and the teleop keyboard. Handy for
+checking the sensors. To open it in a world, add `world:=<file>.usd`.
+
+## Useful launch options
+
+| Option | Meaning |
+|---|---|
+| `world:=<file>.usd` | world to load around the robot |
+| `headless:=true` | run Isaac without a window |
+| `rviz:=false` | don't open RViz |
+| `nav_delay:=40` | wait longer before starting Nav2 (slow PC) |
+| `outline:=false` | hide the orange wall outline |
+
+## New worlds and outlines
+
+The orange outline comes from a map made straight from the Isaac geometry. After making a
+new world, create its outline once and rebuild:
+
+```
+~/isaacsim_5.1/python.sh ~/mobile_robot/src/amr/scripts/isaac_omap.py --world ~/mobile_robot/src/amr/urdf/<name>.usd --out ~/mobile_robot/src/amr_nav/maps/<name>_isaac
+cd ~/mobile_robot && colcon build --symlink-install --packages-select amr_nav
+```
+
+## Things that can go wrong
+
+- Nothing shows in RViz: Isaac needs 30 to 60 s to load. Wait for `[isaac_run] playing`.
+- The robot jumps around or topics show up twice: another Isaac is still running. Close it.
+- A goal is ignored: Nav2 wasn't ready yet. Wait for `Managed nodes are active` and click again.
+- Map save times out: keep the `save_map_timeout:=20.0` part of the command.
+- The warning about `base_ground` inertia and KDL is harmless.
