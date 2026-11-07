@@ -10,6 +10,7 @@ Tested on Ubuntu 22.04, ROS 2 Humble and Isaac Sim 5.1 (installed in `~/isaacsim
 
 - [Part A: navigation on the saved warehouse map](videos/part_a_navigation.mp4)
 - [Part B: navigating while mapping the maze](videos/part_b_navigate_while_mapping.mp4)
+- [Part C: corridor lane coverage](videos/part_c_lane_coverage.mp4)
 
 ## The robot
 
